@@ -136,11 +136,6 @@ class discrete:
                 out[:-k] = h[k:]
         return out
     
-    # **This is just the same signal??**
-    def weighted_sum(h):
-        """Returns the signal as a weighted sum of kronecker deltas."""
-        return h
-    
     def downsample(h, M):
         """Downsamples the signal h by a factor M."""
         return h[::M]
@@ -235,7 +230,7 @@ class continuous:
         return np.cos(w0 * t)
     
     # Sine
-    def sin(n, w0=1, degrees=False):
+    def sin(t, w0=1, degrees=False):
         """Calculates sin(t*w0). Set degrees=True if working with angles in degrees."""
         assert type(w0) != complex, 'sin: w0 should be a real number.'
         if degrees:
@@ -297,17 +292,7 @@ class continuous:
             if periodic:
                 out[:-k] = h[k:]
         return out
-    
-    def downsample(h, M):
-        """Downsamples the signal h by a factor M."""
-        return h[::M]
-    
-    def upsample(h, M):
-        """Upsamples the signal h by a factor M."""
-        out = np.zeros((len(h)*M,))
-        out[::M] = h
-        return out
-    
+
     def flip(h):
         """Flips the signal h in time. h(t) --> h(-t)."""
         return np.flip(h)
@@ -332,4 +317,16 @@ class continuous:
     
     def dilate(h, d):
         """Dilates the signal h by a factor d. f(t) --> f(t/d)."""
-        pass
+        # Interpolate function at times t/d
+        if d >= 1:
+            x = d * np.linspace(0, len(h)-1, len(h))
+            interp_func = interpolate.interp1d(x, h, kind='cubic')
+            h_new = interp_func(np.linspace(0, len(h)-1, len(h)))
+        else:
+            x = np.linspace(0, len(h)-1, len(h))
+            interp_func = interpolate.interp1d(x, h, kind='cubic')
+            h_new = interp_func(np.linspace(0, len(h)-1, int(len(h)*d)))
+            # Zero padding
+            h_new = np.concatenate([h_new, np.zeros(len(h) - len(h_new))])
+        return h_new
+        
