@@ -1,13 +1,16 @@
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy.io import wavfile
 from ipywidgets import HBox, Layout, Output, VBox
 import ipywidgets as widgets
+import IPython
 from IPython.display import HTML
+from scipy import signal
 
 class EchoCancellation():
-    def __init__(self):
+    def __init__(self, filename='Sample.wav'):
         # Load the original signal
-        self.FS, self.x = wavfile.read('Sample.wav')
+        self.FS, self.x = wavfile.read(filename)
         # Convert to mono and shorten
         self.x = np.mean(self.x[len(self.x)//5:], axis=1)
         # Normalize
@@ -39,6 +42,63 @@ class EchoCancellation():
         
         # Q4
         self.Q4 = FloatCheck(minval=0.458, maxval=0.542, description='$T_e=$', width='100px').display
+
+    def display_audio_file(self):
+        # Plot
+        plt.close('all')
+        fig, ax = plt.subplots(1, 1, figsize=(8, 2))
+        ax.plot(np.linspace(0, len(self.y)/self.FS, len(self.y)), self.y, linewidth=0.7)
+        ax.set_title('Audio file'); ax.set_xlabel('Time [s]'); plt.tight_layout(); plt.show()
+        # Create audio widget
+        display(IPython.display.Audio(self.y, rate=self.FS))
+    
+    def display_auto_corr_x(self):
+        # Calculate auto correlation of x
+        corr_x = signal.correlate(self.x, self.x, mode='same')
+        corr_x = corr_x / np.max(np.abs(corr_x)) # Normalize
+
+        # Plot
+        plt.close('all')
+        fig, ax = plt.subplots(1, 1, figsize=(8, 4))
+        ax.plot(np.linspace(-len(corr_x)//2, len(corr_x)//2-1, len(corr_x)), corr_x, linewidth=0.5)
+        ax.grid(); ax.set_title('$R_x[m]$'); ax.set_xlabel('$m$'); plt.show()
+
+    def display_auto_corr_y(self):
+        # Calculate auto correlation of y
+        corr_y = signal.correlate(self.y, self.y, mode='same')
+        corr_y = corr_y / np.max(np.abs(corr_y)) # Normalize
+
+        # Peak detection
+        peaks, _ = signal.find_peaks(corr_y, height=0.3*np.max(corr_y), distance=1000)
+        peaks_adjusted = peaks - len(corr_y)//2
+
+        # Plot
+        plt.close('all')
+        fig, ax = plt.subplots(1, 1, figsize=(8, 4))
+        ax.plot(np.linspace(-len(corr_y)//2, len(corr_y)//2-1, len(corr_y)), corr_y, linewidth=0.5)
+        for i in range(len(peaks)):
+            ax.plot(peaks_adjusted[i], corr_y[peaks[i]], 'rx')
+            ax.text(peaks_adjusted[i], corr_y[peaks[i]]+0.05, f'({peaks_adjusted[i]}, {corr_y[peaks[i]]:.3f})', horizontalalignment='center', color='red')
+        ax.set_ylim([ax.get_ylim()[0], 1.15]); ax.grid(); ax.set_title('$R_y[m]$'); ax.set_xlabel('$m$'); plt.show()
+
+    def display_x_filtered(self):
+        # Get a and n0 from the answer above
+        a = self.Q3.children[0].children[0].value
+        n0 = int(self.Q3.children[1].children[0].value)
+
+        # Filter signal
+        den = np.zeros(n0 + 1)
+        den[0] = 1.
+        den[-1] = a
+        x_est = signal.lfilter(np.array([1.]), den, self.y)
+
+        # Plot signal
+        plt.close('all')
+        fig, ax = plt.subplots(1, 1, figsize=(8, 2))
+        ax.plot(np.linspace(0, len(x_est)/self.FS, len(x_est)), x_est, linewidth=0.7)
+        ax.set_title(r'$\tilde{x}[n]$'); ax.set_xlabel('Time [s]'); plt.tight_layout(); plt.show()
+        # Create audio widget
+        display(IPython.display.Audio(x_est, rate=self.FS))
 
 
 class FloatCheck():
