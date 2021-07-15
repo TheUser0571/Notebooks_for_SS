@@ -642,7 +642,7 @@ class TypeOfFilterZPP(DraggableMarker):
                 self.axs[1].plot([self.theta, self.theta], [0, np.max(h)], 'r--', label=r'$\theta$')
                 self.axs[1].plot([-self.theta, -self.theta], [0, np.max(h)], 'r--')
                 self.axs[1].set_xlabel('$\omega$ [rad]')
-                self.axs[1].set_ylabel('|H(z)| [dB]' if self.show_dB else '|H(z)|')
+                self.axs[1].set_ylabel(r'$|H(e^{jw})|$ [dB]' if self.show_dB else '$|H(e^{jw})|$')
                 self.axs[1].legend(loc='upper right')
                 # Phase
                 if self.show_phase:
@@ -651,7 +651,7 @@ class TypeOfFilterZPP(DraggableMarker):
                     else:
                         self.axs[2].plot(w, h_ph)
                     self.axs[2].set_xlabel('$\omega$ [rad]')
-                    self.axs[2].set_ylabel('$\phi$(H(z)) [deg]')
+                    self.axs[2].set_ylabel('$\phi(H(e^{jw}))$ [deg]')
                 if self.discrete_mode:
                     positions = [-np.pi, -np.pi/2, 0, np.pi/2, np.pi]
                     labels = ['-$\pi$', '-$\dfrac{\pi}{2}$', '0', '$\dfrac{\pi}{2}$', '$\pi$']
