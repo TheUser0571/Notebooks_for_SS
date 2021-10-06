@@ -99,7 +99,7 @@ class OptimalDetecor():
         ax.set_xlabel('Y')
         ax.set_ylabel('Number of samples')
 
-        plt.grid(which='both')
+        ax.xaxis.grid(which='both')
         plt.show()
     
     
@@ -163,7 +163,7 @@ class OptimalDetecor():
 
         self.ax.set_xlabel('Y')
         self.ax.set_ylabel('Number of samples')
-        self.ax.grid(which='both')
+        self.ax.xaxis.grid(which='both')
         
         if not update:
             self.beta_slider = widgets.FloatSlider(value=beta, min=y_min, max=y_max, description=r'$\beta$:', 
