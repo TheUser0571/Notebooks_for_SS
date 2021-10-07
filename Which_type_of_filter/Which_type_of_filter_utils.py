@@ -297,7 +297,7 @@ class TypeOfFilterZPP(DraggableMarker):
     def init_figure(self, z_x, z_y, p_x, p_y):
         with self.out:
             # Create the zero pole plot
-            self.fig = plt.figure(figsize=(8, 4))
+            self.fig = plt.figure('Which type of filter demo', figsize=(8, 4))
             self.gs = self.fig.add_gridspec(2, 2)
             self.axs.append(self.fig.add_subplot(self.gs[:, 0]))
             uc = self.unit_circle()

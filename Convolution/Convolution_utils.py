@@ -74,7 +74,7 @@ class Convolution_demo():
     def init_figure(self):
         # Plot static plots of h and g
         with self.out_static:
-            self.fig_static, self.axs_static = plt.subplots(1, 2, figsize=(8.5, 2.5))
+            self.fig_static, self.axs_static = plt.subplots(1, 2, figsize=(8.5, 2.5), num='Static Plots')
             # Plot h
             self.axs_static[0].plot(self.k, self.h, 'o', color='red')
             for i, k in enumerate(self.k):
@@ -90,7 +90,7 @@ class Convolution_demo():
             plt.tight_layout(pad=0.1, w_pad=1.0, h_pad=0.1)
         
         with self.out:
-            self.fig = plt.figure(figsize=(8.5, 5.5))
+            self.fig = plt.figure('Convolution Demo', figsize=(8.5, 5.5))
             self.gs = self.fig.add_gridspec(4, 1)
 
             # Plot h

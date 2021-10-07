@@ -45,7 +45,7 @@ class DFT_temporal_aliasing():
         
         with self.out:
             
-            self.fig = plt.figure(figsize=(9,5),constrained_layout=False)
+            self.fig = plt.figure('Temporal aliasing of DFT demo',figsize=(9,5),constrained_layout=False)
             self.gs = self.fig.add_gridspec(3,1)
     
             # Plot the original function

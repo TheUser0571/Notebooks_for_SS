@@ -63,7 +63,7 @@ class Recursive_filtering_demo():
     
     def init_figure(self):
         with self.out:
-            self.fig = plt.figure(figsize=(8.5, 4.5))
+            self.fig = plt.figure('Recursive filtering demo', figsize=(8.5, 4.5))
             self.gs = self.fig.add_gridspec(2, 1)
 
             # Plot x

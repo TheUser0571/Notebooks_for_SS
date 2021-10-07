@@ -36,7 +36,7 @@ class Signal_undersampling():
     
     def init_figure(self):
         with self.out:
-            self.fig = plt.figure(figsize=(8.5, 3.5))
+            self.fig = plt.figure('Signal undersampling demo',figsize=(8.5, 3.5))
             self.gs = self.fig.add_gridspec(2, 2)
 
             # Plot the signals

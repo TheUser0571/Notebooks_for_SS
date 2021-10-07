@@ -5,7 +5,7 @@ import time
 
 def visualize_signal_and_kernel(x, kernel, mu=0, sig=1, kernel_sig=10):
     plt.close('all')
-    fig, axs = plt.subplots(1, 2, figsize=(9, 3))
+    fig, axs = plt.subplots(1, 2, figsize=(9, 3), num='Signal and kernel display')
     axs[0].plot(x)
     axs[0].set_title(f'Random noise ($\mu={mu}$, $\sigma={sig}$)')
     axs[0].set_xlabel('n')
@@ -48,7 +48,7 @@ def visualize_zero_padding(x, kernel):
     x_padded, kernel_padded = zero_padding(x, kernel)
     
     plt.close('all')
-    fig, axs = plt.subplots(1, 2, figsize=(9,3))
+    fig, axs = plt.subplots(1, 2, figsize=(9,3), num='Zero padding visualization')
     axs[0].set_title('Padded random noise')
     axs[0].plot(x_padded)
     axs[0].set_xlabel('n')
@@ -68,7 +68,7 @@ def DFT_filtering(x, kernel):
 
 def visualize_DFT_filtering(x_filtered_FT, x_filtered):
     plt.close('all')
-    fig, axs = plt.subplots(2, 1, figsize=(9,4))
+    fig, axs = plt.subplots(2, 1, figsize=(9,4), num='DFT filtering visualization')
     axs[0].set_title('Traditional filtering')
     axs[0].plot(x_filtered)
 
@@ -113,7 +113,7 @@ def visualize_overlap_add(x_filtered_blocks, x_filtered_overlap_add, x_filtered,
     N = x_filtered_blocks.shape[1] - (M - 1)
 
     plt.close('all')
-    fig, axs = plt.subplots(3, 1, figsize=(9,6))
+    fig, axs = plt.subplots(3, 1, figsize=(9,6), num='Overlap-add visualization')
 
     # Display the individual blocks and their overlap (with shifted indices)
     for i in range(n):
@@ -169,7 +169,7 @@ def visualize_overlap_save(x_filtered_blocks, x_filtered_overlap_save, x_filtere
     N = x_filtered_blocks.shape[1] - (M - 1)
 
     plt.close('all')
-    fig, axs = plt.subplots(3, 1, figsize=(9,6))
+    fig, axs = plt.subplots(3, 1, figsize=(9,6), num='overlap-save visualization')
 
     # Display the individual blocks and their overlap (with shifted indices)
     for i in range(n):
@@ -237,7 +237,7 @@ def visualize_time_and_error(x, kernel, runs=1000, ns=np.linspace(2, 10, 5, dtyp
         error_overlap_save.append(calc_error(overlap_save, x, kernel, n, x_filtered))
 
     plt.close('all')
-    fig, axs = plt.subplots(1, 2, figsize=(9, 4))
+    fig, axs = plt.subplots(1, 2, figsize=(9, 4), num='Time and error display')
 
     axs[0].semilogy(ns, execution_time_overlap_add, label='Overlap add')
     axs[0].semilogy(ns, execution_time_overlap_save, label='Overlap save')

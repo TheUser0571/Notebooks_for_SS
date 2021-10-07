@@ -45,7 +45,7 @@ class PDF():
     
     def disp(self, yaxis=False):
         plt.close('all')
-        fig, ax = plt.subplots(1, 1)
+        fig, ax = plt.subplots(1, 1, num='Probability density function')
         ax.set_title('g(n)')
         ax.plot(self.n, self.pdf)
         ax.set_xlabel('n')
@@ -63,7 +63,7 @@ class OptimalDetecor():
         
     def hist(self):
         plt.close('all')
-        fig, ax = plt.subplots(1,1)
+        fig, ax = plt.subplots(1,1, num='Histogram')
         
         y_0 = self.x[self.x==0] + self.n[self.x==0]
         y_4 = self.x[self.x==4] + self.n[self.x==4]
@@ -111,7 +111,7 @@ class OptimalDetecor():
             
             self.out = Output(layout={'width': '980px', 'height': '500px'})
             with self.out:
-                self.fig, self.ax = plt.subplots(1,1)
+                self.fig, self.ax = plt.subplots(1,1, num='Histogram with beta')
         self.ax.set_title('Histogram of Y=X+N')
 
         n = self.pdf.draw_sample(len(self.x))

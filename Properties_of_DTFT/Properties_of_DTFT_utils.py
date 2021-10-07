@@ -63,7 +63,7 @@ class DTFT_properties():
     def __init__figure(self):
         with self.out:
             
-            self.fig = plt.figure(figsize=(7,7),constrained_layout=False)
+            self.fig = plt.figure('Properties of DTFT demo', figsize=(7,7), constrained_layout=False)
             self.gs = self.fig.add_gridspec(4,4)
     
             # Plot the original function

@@ -45,7 +45,7 @@ class LPF():
         s_phaseless = np.fft.ifft(np.abs(np.fft.fft(self.s))).real
 
         plt.close('all')
-        plt.figure(figsize=(8, 2.5))
+        plt.figure('Removed phase', figsize=(8, 2.5))
         plt.plot(np.linspace(0, len(self.s)/self.SF, len(self.s)), self.s, label='Original')
         plt.plot(np.linspace(0, len(s_phaseless)/self.SF, len(s_phaseless)), s_phaseless, label='Removed phase', alpha=0.7)
         plt.title('Sound wave')
@@ -72,7 +72,7 @@ class LPF():
         s_random_phase = np.fft.ifft(np.fft.fft(self.s) * np.exp(ph)).real
 
         plt.close('all')
-        plt.figure(figsize=(8, 2.5))
+        plt.figure('Modified phase', figsize=(8, 2.5))
         plt.plot(np.linspace(0, len(self.s)/self.SF, len(self.s)), self.s, label='Original')
         plt.plot(np.linspace(0, len(s_random_phase)/self.SF, len(s_random_phase)), s_random_phase, label='Random phase', alpha=0.7)
 
@@ -270,7 +270,7 @@ class LinearPhaseFilterExercise(DraggableMarker):
     def init_figure(self, z_x, z_y, p_x, p_y):
         with self.out:
             # Create the zero pole plot
-            self.fig = plt.figure(figsize=(8, 4))
+            self.fig = plt.figure('Zero Pole Plot', figsize=(8, 4))
             self.gs = self.fig.add_gridspec(2, 2)
             self.axs.append(self.fig.add_subplot(self.gs[:, 0]))
             uc = self.unit_circle()

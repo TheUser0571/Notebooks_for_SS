@@ -126,7 +126,7 @@ class Conv_Zero_Padding():
             fft_times.append(f_t)
 
         plt.close('all')
-        plt.figure()
+        plt.figure('Time comparison display')
         plt.title('Time comparison between convolution and FFT filtering')
         plt.plot(sizes, conv_times, label='Convolution')
         plt.plot(sizes, fft_times, label='FFT')

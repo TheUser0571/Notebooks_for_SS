@@ -46,7 +46,7 @@ class EchoCancellation():
     def display_audio_file(self):
         # Plot
         plt.close('all')
-        fig, ax = plt.subplots(1, 1, figsize=(8, 2))
+        fig, ax = plt.subplots(1, 1, figsize=(8, 2), num='Audio file display')
         ax.plot(np.linspace(0, len(self.y)/self.FS, len(self.y)), self.y, linewidth=0.7)
         ax.set_title('Audio file'); ax.set_xlabel('Time [s]'); plt.tight_layout(); plt.show()
         # Create audio widget
@@ -59,7 +59,7 @@ class EchoCancellation():
 
         # Plot
         plt.close('all')
-        fig, ax = plt.subplots(1, 1, figsize=(8, 4))
+        fig, ax = plt.subplots(1, 1, figsize=(8, 4), num='Auto correlation x display')
         ax.plot(np.linspace(-len(corr_x)//2, len(corr_x)//2-1, len(corr_x)), corr_x, linewidth=0.5)
         ax.grid(); ax.set_title('$R_x[m]$'); ax.set_xlabel('$m$'); plt.show()
 
@@ -74,7 +74,7 @@ class EchoCancellation():
 
         # Plot
         plt.close('all')
-        fig, ax = plt.subplots(1, 1, figsize=(8, 4))
+        fig, ax = plt.subplots(1, 1, figsize=(8, 4), num='Auto correlation y display')
         ax.plot(np.linspace(-len(corr_y)//2, len(corr_y)//2-1, len(corr_y)), corr_y, linewidth=0.5)
         for i in range(len(peaks)):
             ax.plot(peaks_adjusted[i], corr_y[peaks[i]], 'rx')
@@ -94,7 +94,7 @@ class EchoCancellation():
 
         # Plot signal
         plt.close('all')
-        fig, ax = plt.subplots(1, 1, figsize=(8, 2))
+        fig, ax = plt.subplots(1, 1, figsize=(8, 2), num='Filtered x display')
         ax.plot(np.linspace(0, len(x_est)/self.FS, len(x_est)), x_est, linewidth=0.7)
         ax.set_title(r'$\tilde{x}[n]$'); ax.set_xlabel('Time [s]'); plt.tight_layout(); plt.show()
         # Create audio widget

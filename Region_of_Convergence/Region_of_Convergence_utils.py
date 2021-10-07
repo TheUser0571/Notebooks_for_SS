@@ -78,7 +78,7 @@ class Region_of_Convergence():
     def init_figure(self, p_x, p_y):
         with self.out:
             # Create the Complex plane plot and small plots for H and h
-            self.fig = plt.figure(figsize=(8, 4))
+            self.fig = plt.figure('Region of convergence demo', figsize=(8, 4))
             self.gs = self.fig.add_gridspec(2, 2)
 
             self.axs.append(self.fig.add_subplot(self.gs[:, 0]))
