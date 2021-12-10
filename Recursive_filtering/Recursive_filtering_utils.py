@@ -5,7 +5,7 @@ from ipywidgets import interact, fixed, IntSlider, HBox, Layout, Output, VBox
 import ipywidgets as widgets
 
 class Recursive_filtering_demo():
-    def __init__(self, q=0.5, a=0.5, r=0.5, noto=True):
+    def __init__(self, q=0.8, a=0.6, r=0.6, noto=True):
         self.out = Output(layout={'width': '1000px', 'height': '600px'})
         self.axs = []
         self.noto = noto
@@ -94,7 +94,7 @@ class Recursive_filtering_demo():
             self.txt = self.axs[1].text(len(self.y)-1, self.y[-1], '?', fontdict={'color': 'red', 'size': 20})
             self.axs[1].set_xlim([-3, 16])
             self.axs[1].set_xticks(np.linspace(-2, 15, 18))
-            self.axs[1].set_title('y[m]')
+            self.axs[1].set_title(f'y[{self.m}] = {self.a}x[{self.m}]+{self.r}y[{self.m-1}]')
             self.axs[1].set_xlabel('m')
             
             self.stemlines_y.set_color(self.y_color_light)
@@ -149,6 +149,7 @@ class Recursive_filtering_demo():
             self.title_text.value = f'<h2>Recursive Filtering: $m={self.m}$</h2>'
         else:
             self.title_text.value = f'<h4>Recursive Filtering: $m={self.m}$</h4>'
+        self.axs[1].set_title(f'y[{self.m}] = {self.a}x[{self.m}]+{self.r}y[{self.m-1}]')
         # Update x plot
         if self.m > 0:
             self.stemlines_x.set_segments([[[i, 0], [i, self.x[i]]] for i in range(len(self.x))])
