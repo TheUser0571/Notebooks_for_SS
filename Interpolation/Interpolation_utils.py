@@ -12,7 +12,7 @@ class Interpolation():
         self.Q1 = MCQ(['Rect','Tri', 'Sinc'], 'Sinc').display
         self.Q2 = FloatCheck(0, 0, description='T =', width='80px').display
         self.Q3 = FloatCheck(0.1, 0.1, description='T =', width='80px').display
-        self.Q4 = FloatCheck(0.4, 0.4, description='T =', width='80px').display
+        self.Q4 = FloatCheck(0.5, 0.5, description='T =', width='80px').display
         
         self.out = Output(layout={'width': '980px', 'height': '450px'})
 
@@ -46,11 +46,11 @@ class Interpolation():
         
         #self.x_funct = np.linspace(0, 10, num= 1000, endpoint=True)
         #self.y_funct = np.sin(self.x_funct)
-        self.x = np.linspace(-10, 10, num=1001, endpoint=True)
+        self.x = np.linspace(-2.5, 2.5, num=1001, endpoint=True)
         self.y = np.sinc(self.x)**2
-        self.x_val = np.linspace(-10, 10, num=int(20/self.period), endpoint=True)
+        self.x_val = np.linspace(-2.5, 2.5, num=int(5/self.period)+1, endpoint=True)
         self.y_val = np.sinc(self.x_val)**2
-        self.x_interp = np.linspace(-10, 10, num=1001, endpoint=True)
+        self.x_interp = np.linspace(-2.5, 2.5, num=1001, endpoint=True)
         self.y_interp = np.zeros(1001)
         #self.f = interp1d(self.x, self.y, kind='nearest')
         #self.y_interp = self.f(self.x_interp)
@@ -144,7 +144,7 @@ class Interpolation():
         
     def sampling_period_callback(self, value):
         self.period = value['new']
-        self.x_val = np.linspace(-10, 10, num=int(20/self.period), endpoint=True)
+        self.x_val = np.linspace(-2.5, 2.5, num=int(5/self.period)+1, endpoint=True)
         self.y_val = np.sinc(self.x_val)**2
         self.axs[1].lines[2].set_data(self.x_val, self.y_val)
         self.y_interp = self.interpolation()
