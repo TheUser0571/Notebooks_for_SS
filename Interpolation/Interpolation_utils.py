@@ -10,14 +10,14 @@ from exercise_utils import *
 class Interpolation():
     def __init__(self):
         self.Q1 = MCQ(['Rect','Tri', 'Sinc'], 'Sinc').display
-        self.Q2 = FloatCheck(0, 0, description='T =', width='80px').display
-        self.Q3 = FloatCheck(0.1, 0.1, description='T =', width='80px').display
-        self.Q4 = FloatCheck(0.5, 0.5, description='T =', width='80px').display
+        self.Q2 = MCQ(['0.1','0.25', '0.5', 'None of the above'], 'None of the above').display
+        self.Q3 = MCQ(['0.1','0.25', '0.5', 'None of the above'], 'None of the above').display
+        self.Q4 = MCQ(['0.1','0.25', '0.5', 'None of the above'], '0.5').display
         
         self.out = Output(layout={'width': '980px', 'height': '450px'})
 
         self.axs = []
-        self.period = 1
+        self.period = 0.2
         
         # Interpolation function type
         self.interp_funct_types = {'rect':0, 'tri':1, 'sinc':2}
@@ -58,10 +58,12 @@ class Interpolation():
         self.print_err = widgets.Text(
             value=str(np.round(self.error(), 3)), description="Error:", layout=Layout(width='max-content'))
         
-        self.sampling_period = widgets.FloatSlider(value=self.period, min=0.1, max=5, step=0.1, 
-                                                   description='Sampling period', 
-                                                   style={'description_width': 'initial'},
-                                                   layout=Layout(width='400px'))
+        self.sampling_period = widgets.SelectionSlider(options=list(np.round(5 / np.linspace(50, 1, 50), 3)),
+                                                       value=self.period,
+                                                       continuous_update=True, 
+                                                       description='Sampling period', 
+                                                       style={'description_width': 'initial'},
+                                                       layout=Layout(width='400px'))
         self.sampling_period.observe(self.sampling_period_callback, names='value')
         #For the interpolation function
         #self.functx = np.linspace(-1, 1, num=100, endpoint= True)
