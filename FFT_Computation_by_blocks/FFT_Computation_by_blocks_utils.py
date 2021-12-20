@@ -24,17 +24,18 @@ def create_signal_and_kernel(num_samples=3000, mu=0, sig=1, kernel_size=100, ker
 
     return x, kernel
 
-def convolution_filter(x, kernel, mode='full'):
+def convolution_filter(x, kernel):
     # np.convolve uses DFT filtering internally...
     # return np.convolve(x, kernel, mode=mode)
 
     # Manual convolution
-    out = np.zeros(x.shape[0] + kernel.shape[0] - 1)
+    out = np.zeros(x.shape[0])
     for i in range(1, out.shape[0]+1):
         if i < kernel.shape[0]:
             out[i-1] = np.sum(kernel[i-1::-1] * x[:i])
-        elif i > x.shape[0]:
-            out[i-1] = np.sum(kernel[-1:(i-x.shape[0])-1:-1] * x[i-kernel.shape[0]:])
+        # Only used if the 'full' convolution is done
+#        elif i > x.shape[0]:
+#            out[i-1] = np.sum(kernel[-1:(i-x.shape[0])-1:-1] * x[i-kernel.shape[0]:])
         else:
             out[i-1] = np.sum(kernel[::-1] * x[i-kernel.shape[0]:i])
     return out
@@ -63,8 +64,8 @@ def DFT_filtering(x, kernel):
     x_FT = np.fft.fft(x_padded)
     kernel_FT = np.fft.fft(kernel_padded)
     x_filtered_FT = np.fft.ifft(x_FT * kernel_FT).real
-
-    return x_filtered_FT
+    # Return the filtered signal of the same length as the input signal
+    return x_filtered_FT[:x.shape[0]]
 
 def visualize_DFT_filtering(x_filtered_FT, x_filtered):
     plt.close('all')
@@ -117,14 +118,18 @@ def visualize_overlap_add(x_filtered_blocks, x_filtered_overlap_add, x_filtered,
 
     # Display the individual blocks and their overlap (with shifted indices)
     for i in range(n):
-        axs[0].plot(indices[i * N:(i+1) * N + M - 1], x_filtered_blocks[i], label=f'$x_{i}$')
+        if i == n-1:
+            # Display the signal with the same length as the original signal
+            axs[0].plot(indices[i * N:(i+1) * N], x_filtered_blocks[i, :-M+1], label=f'$x_{i}$')
+        else:
+            axs[0].plot(indices[i * N:(i+1) * N + M - 1], x_filtered_blocks[i], label=f'$x_{i}$')
 
     axs[0].set_title('DFT filtered blocks')
     axs[0].legend(loc='upper right')
     axs[0].set_xlabel('n')
 
     # Display the final overlap add filtered signal
-    axs[1].plot(x_filtered_overlap_add)
+    axs[1].plot(x_filtered_overlap_add[:-M+1])
     axs[1].set_title('"Overlap add" filtered signal')
     axs[1].set_xlabel('n')
 
@@ -143,13 +148,11 @@ def overlap_save(x, kernel, n):
     assert N == int(N), 'The length of x is not a multiple of n.'
     N = int(N)
 
-    # We need one more block for the last M-1 values to get the 'full' convolution
-    x_blocks = np.zeros((n + 1, N + M - 1))
+    # Create blocks
+    x_blocks = np.zeros((n, N + M - 1))
     # Creation of extended blocks
     for i in range(x_blocks.shape[0]):
-        x_blocks[i, :M - 1] = x_blocks[i - 1, -(M - 1):]
-        if i != x_blocks.shape[0] - 1:
-            x_blocks[i, M - 1:] = x[i * N: (i + 1) * N]
+        x_blocks[i] = np.hstack([x_blocks[i - 1, -(M - 1):], x[i * N: (i + 1) * N]])
 
     kernel_padded = np.hstack([kernel, np.zeros(N - 1)])
 
@@ -161,7 +164,7 @@ def overlap_save(x, kernel, n):
     # Combining the blocks to form the final filtered signal (remove the first M-1 values from all blocks).
     x_filtered_overlap_save = x_filtered_blocks[:, M - 1:]
 
-    return x_filtered_blocks, x_filtered_overlap_save.ravel()[:-N + (M - 1)]
+    return x_filtered_blocks, x_filtered_overlap_save.ravel()
 
 def visualize_overlap_save(x_filtered_blocks, x_filtered_overlap_save, x_filtered, M):
     indices = np.linspace(0, x_filtered_overlap_save.shape[0]-1, x_filtered_overlap_save.shape[0])
@@ -175,8 +178,9 @@ def visualize_overlap_save(x_filtered_blocks, x_filtered_overlap_save, x_filtere
     for i in range(n):
         if i == 0:
             axs[0].plot(indices[:N], x_filtered_blocks[i, M-1:], label=f'$x_{i}$')
-        elif i == n - 1:
-            axs[0].plot(indices[i * N - (M - 1):], x_filtered_blocks[i, :2*(M-1)], label=f'$x_{i}$')
+        # Only needed when doing the 'full' convolution
+#        elif i == n - 1:
+#            axs[0].plot(indices[i * N - (M - 1):], x_filtered_blocks[i, :2*(M-1)], label=f'$x_{i}$')
         else:
             axs[0].plot(indices[i * N - (M - 1):(i+1) * N], x_filtered_blocks[i], label=f'$x_{i}$')
 
@@ -201,7 +205,7 @@ def rms(x, y):
     return np.sqrt(np.mean((x - y)**2))
 
 def calc_error(fun, x, kernel, n, x_filtered):
-    return rms(fun(x, kernel, n)[1], x_filtered)
+    return rms(fun(x, kernel, n)[1][:x_filtered.shape[0]], x_filtered)
 
 def execution_time(fun, x, kernel, n=None, runs=1000):
     if n is not None:
