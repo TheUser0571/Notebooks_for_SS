@@ -31,7 +31,8 @@ class DFT_temporal_aliasing():
         #self.index = np.arange(5*(2*10*self.N+5))
         
         
-        self.choose_N = widgets.IntSlider(value = self.N, min = 5, max = 50, step = 1, description = 'Periodization cosntant')
+        self.choose_N = widgets.IntSlider(value = self.N, min = 5, max = 50, step = 1, description = 'Periodization cosntant', 
+                                          style={'description_width':'initial'}, layout={'width':'400px'})
         self.choose_N.observe(self.choose_N_callback, names='value')
         
         self.__init__figure()
@@ -57,6 +58,7 @@ class DFT_temporal_aliasing():
             self.axs[0].set_xticks([1e-4], minor=True)
             self.axs[0].xaxis.grid(True, which='minor',
                                    color='black', linewidth='0.5')
+            self.axs[0].set_xlabel('n')
             markerline, stemlines, baseline = self.axs[0].stem(self.x, self.y.real, use_line_collection=True)
             baseline.set_visible(False)
             
@@ -78,6 +80,7 @@ class DFT_temporal_aliasing():
         self.axs[1].set_xticks([1e-4], minor=True)
         self.axs[1].xaxis.grid(True, which='minor',
                                    color='black', linewidth='0.5')
+        self.axs[1].set_xlabel('n')
         self.x_period_cut = self.x_period[int((len(self.x_period)-1)/2-40):int((len(self.x_period)-1)/2+61)]
         self.x_period_cut_dft = self.x_period[int((len(self.x_period)-1)/2):int((len(self.x_period)-1)/2+21)]
         self.y_period_cut = self.y_period[int((len(self.x_period)-1)/2-50):int((len(self.x_period)-1)/2+51)]
@@ -98,6 +101,7 @@ class DFT_temporal_aliasing():
         self.axs[2].set_xticks([1e-4], minor=True)
         self.axs[2].xaxis.grid(True, which='minor',
                                    color='black', linewidth='0.5')
+        self.axs[2].set_xlabel('m')
         vector = np.vectorize(int)
         x_fourier = fftshift(fftfreq(len(self.x_period_cut_dft)))
         y_fourier = fftshift(discrete.DFT(self.y_period_cut_dft, np.arange(0,len(self.y_period_cut_dft))))

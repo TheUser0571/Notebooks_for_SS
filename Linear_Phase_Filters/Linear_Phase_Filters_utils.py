@@ -11,7 +11,7 @@ class LPF():
     def __init__(self, filename='piano.wav'):
         self.SF, self.s = wavfile.read(filename)
         self.s = self.s/np.max(np.abs(self.s))
-        print(f'Sampling frequency = {self.SF}\nNumber of samples = {len(self.s)}')
+        print(f'Sampling frequency = {self.SF} Hz\nNumber of samples = {len(self.s)}')
         
         self.s_FT = np.abs(np.fft.fft(self.s))
         self.s_FT = self.s_FT / self.s_FT.max()

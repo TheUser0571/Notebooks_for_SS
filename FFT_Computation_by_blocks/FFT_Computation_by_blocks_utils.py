@@ -72,9 +72,11 @@ def visualize_DFT_filtering(x_filtered_FT, x_filtered):
     fig, axs = plt.subplots(2, 1, figsize=(9,4), num='DFT filtering visualization')
     axs[0].set_title('Traditional filtering')
     axs[0].plot(x_filtered)
+    axs[0].set_xlabel('n')
 
     axs[1].set_title('DFT filtering')
     axs[1].plot(x_filtered_FT)
+    axs[1].set_xlabel('n')
     plt.tight_layout()
     plt.show()
 

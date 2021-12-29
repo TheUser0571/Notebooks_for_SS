@@ -5,7 +5,7 @@ from IPython.display import HTML
 
 class FloatCheck():
     def __init__(self, minval, maxval, description='Value:', width='100px'):
-        self.text = widgets.FloatText(value=0, description=description, layout=Layout(width=width), style = {'description_width': 'initial'})
+        self.text = widgets.FloatText(value=0, description=description, layout=Layout(width=width), style={'description_width':'initial'})
         self.text.observe(self.check_answer, names='value')
         self.min = minval
         self.max = maxval

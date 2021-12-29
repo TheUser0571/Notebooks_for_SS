@@ -49,11 +49,11 @@ class Filter_Demo():
         self.text_filt = widgets.HTML(value="<h3>Filtered</h3>")
 
         # Add frequency sliders
-        self.f0_slider = widgets.IntSlider(value=self.SF//6, min=50, max=self.SF//2-300, description='$f_0$:',
-                                          continuous_update=False)
+        self.f0_slider = widgets.IntSlider(value=self.SF//6, min=50, max=self.SF//2-300, description='$\;f_0\,[Hz]$:',
+                                          continuous_update=False, style={'description_width':'initial'})
         self.f0_slider.observe(self.f0_callback, names='value')
-        self.f1_slider = widgets.IntSlider(value=2*self.SF//6, min=50, max=self.SF//2-300, description='$f_1$:', 
-                                           continuous_update=False, disabled=True)
+        self.f1_slider = widgets.IntSlider(value=2*self.SF//6, min=50, max=self.SF//2-300, description='$\;f_1\,[Hz]$:', 
+                                           continuous_update=False, disabled=True, style={'description_width':'initial'})
         self.f1_slider.observe(self.f1_callback, names='value')
         
         self.apply_button = widgets.Button(description='Apply filter', layout=Layout(width='95%'))

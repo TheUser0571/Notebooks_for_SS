@@ -87,7 +87,7 @@ class Conv_Zero_Padding():
         self.img_fft_filtered_padded = self.FFT_filtering(mode='full')
         plt.close('all')
         titles = ['Original', 'FFT filtered (no padding)', 'Convolution', 'FFT filtered (zero padding)']
-        view = viewer([self.img, self.img_fft_filtered, self.img_convolved, self.img_fft_filtered_padded], title=titles, subplots=(2,2))
+        view = viewer([self.img, self.img_fft_filtered, self.img_convolved, self.img_fft_filtered_padded], title=titles, subplots=(2,2), joint_zoom=True)
 
     def rmse(self, x, y):
         return np.sqrt(np.mean((x - y)**2))
