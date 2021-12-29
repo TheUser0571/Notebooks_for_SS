@@ -612,12 +612,12 @@ class DraggableZeroPolePlot(DraggableMarker):
                     self.actual_change = True
 
     def calc_not_possible(self):
-        self.cnp_gain = self.axs[1].text(0.5, 0.5, "Le calcul n'est pas possible", fontdict={'color': 'red', 'size': 17},
+        self.cnp_gain = self.axs[1].text(0.5, 0.5, "Calculation not possible", fontdict={'color': 'red', 'size': 17},
                                          horizontalalignment='center',
                                          verticalalignment='center',
                                          transform=self.axs[1].transAxes)
         if self.show_phase:
-            self.cnp_ph = self.axs[2].text(0.5, 0.5, "Le calcul n'est pas possible", fontdict={'color': 'red', 'size': 17},
+            self.cnp_ph = self.axs[2].text(0.5, 0.5, "Calculation not possible", fontdict={'color': 'red', 'size': 17},
                                            horizontalalignment='center',
                                            verticalalignment='center',
                                            transform=self.axs[2].transAxes)
