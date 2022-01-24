@@ -7,6 +7,41 @@ import IPython
 from IPython.display import HTML
 from scipy import signal
 
+class FloatCheckCustom():
+    def __init__(self, val, description_1='Value:', description_2='Value:', width='100px'):
+        self.text_1 = widgets.FloatText(value=0, description=description_1, layout=Layout(width=width), style={'description_width':'initial'})
+        self.text_1.observe(self.check_answer_1, names='value')
+        self.text_2 = widgets.FloatText(value=0, description=description_2, layout=Layout(width=width), style={'description_width':'initial'})
+        self.text_2.observe(self.check_answer_2, names='value')
+        self.val = val
+        self.incorrect_html = '<p style="color:Red;">Incorrect</p>'
+        self.correct_html = '<p style="color:Green;">Correct</p>'
+        self.html_1 = widgets.HTML('', layout=Layout(width='75px'))
+        self.html_2 = widgets.HTML('', layout=Layout(width='75px'))
+        self.display = HBox([self.text_1, self.html_1, self.text_2, self.html_2])
+    
+    def check_answer_1(self, value):
+        if abs(value['new']) == self.val:
+            self.html_1.value = self.correct_html
+            # One needs to be negative, the other positive
+            if value['new'] == -self.text_2.value:
+                self.html_2.value = self.correct_html
+            else:
+                self.html_2.value = self.incorrect_html       
+        else:
+            self.html_1.value = self.incorrect_html
+    
+    def check_answer_2(self, value):
+        if abs(value['new']) == self.val:
+            self.html_2.value = self.correct_html
+            # One needs to be negative, the other positive
+            if value['new'] == -self.text_1.value:
+                self.html_1.value = self.correct_html
+            else:
+                self.html_1.value = self.incorrect_html       
+        else:
+            self.html_2.value = self.incorrect_html
+
 class EchoCancellation():
     def __init__(self, filename='Sample.wav'):
         # Load the original signal
@@ -28,12 +63,11 @@ class EchoCancellation():
         self.Q1 = FloatCheck(minval=3.85, maxval=3.86, description='$T=$').display
         
         # Q2
-        Q2_1 = FloatCheck(minval=1.25, maxval=1.25, description='$a_0=$', width='100px')
-        Q2_2 = FloatCheck(minval=0.5, maxval=0.5, description='$a_1=$', width='100px')
-        Q2_3 = FloatCheck(minval=0.5, maxval=0.5, description='$a_2=$', width='100px')
-        Q2_4 = FloatCheck(minval=-5, maxval=-5, description='$m_1=$', width='100px')
-        Q2_5 = FloatCheck(minval=5, maxval=5, description='$m_2=$', width='100px')
-        self.Q2 = HBox([Q2_1.display, Q2_2.display, Q2_3.display, Q2_4.display, Q2_5.display])
+        Q2_1 = FloatCheck(minval=1.25, maxval=1.25, description='$b_0=$', width='100px')
+        Q2_2 = FloatCheck(minval=0.5, maxval=0.5, description='$b_1=$', width='100px')
+        Q2_3 = FloatCheck(minval=0.5, maxval=0.5, description='$b_2=$', width='100px')
+        Q2_4 = FloatCheckCustom(val=5, description_1='$m_1=$', description_2='$m_2=$', width='100px')
+        self.Q2 = HBox([Q2_1.display, Q2_2.display, Q2_3.display, Q2_4.display])
         
         # Q3
         Q3_1 = FloatCheck(minval=0.35, maxval=0.5, description='$a=$', width='100px')
