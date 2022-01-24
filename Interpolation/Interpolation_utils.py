@@ -35,7 +35,7 @@ class Interpolation():
         self.funct_menu = widgets.Dropdown(options=self.interp_funct_types.keys(), 
                                            value=self.funct, 
                                            description="Interpolation function: ", 
-                                           layout=Layout(width='max-content'),
+                                           layout=Layout(width='200px'),
                                            style = {'description_width': 'initial'})
         
         
@@ -56,13 +56,13 @@ class Interpolation():
         #self.y_interp = self.f(self.x_interp)
         
         self.print_err = widgets.Text(
-            value=str(np.round(self.error(), 3)), description="Error:", layout=Layout(width='max-content'))
+            value=str(np.round(self.error(), 3)), description="Error:", layout=Layout(width='150px'), style={'description_width':'70px'})
         
         self.sampling_period = widgets.SelectionSlider(options=list(np.round(5 / np.linspace(50, 1, 50), 3)),
                                                        value=self.period,
                                                        continuous_update=True, 
                                                        description='Sampling period', 
-                                                       style={'description_width': 'initial'},
+                                                       style={'description_width':'150px'},
                                                        layout=Layout(width='400px'))
         self.sampling_period.observe(self.sampling_period_callback, names='value')
         #For the interpolation function
@@ -72,7 +72,7 @@ class Interpolation():
         self.init_figure()
         #plt.show()
         
-        display(VBox([self.funct_menu, self.out, HBox([self.sampling_period, self.print_err])]))
+        display(VBox([self.out, HBox([self.funct_menu, self.sampling_period, self.print_err])]))
         plt.tight_layout(pad=0.1, w_pad=1.0, h_pad=0.1)
         
         #self.print_err
