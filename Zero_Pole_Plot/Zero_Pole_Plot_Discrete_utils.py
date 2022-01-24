@@ -27,12 +27,9 @@ class DraggableMarker():
         self.active_point = 0
         self.active_line = 0
         self.draggable = False
-        self.c1 = self.ax.figure.canvas.mpl_connect(
-            "button_press_event", self.click)
-        self.c2 = self.ax.figure.canvas.mpl_connect(
-            "button_release_event", self.release)
-        self.c3 = self.ax.figure.canvas.mpl_connect(
-            "motion_notify_event", self.drag)
+        self.c1 = self.ax.figure.canvas.mpl_connect("button_press_event", self.click)
+        self.c2 = self.ax.figure.canvas.mpl_connect("button_release_event", self.release)
+        self.c3 = self.ax.figure.canvas.mpl_connect("motion_notify_event", self.drag)
 
     def get_active_line(self):
         return self.active_line
@@ -124,19 +121,18 @@ class DraggableZeroPolePlot(DraggableMarker):
         
         for i in range(zeros):
             z_x.append(0.5)
-            z_y.append(0.5)
+            z_y.append(0)
        
         for i in range(poles):
-            p_x.append(0.5)
-            p_y.append(-0.5)
+            p_x.append(-0.5)
+            p_y.append(0)
             
         self.collapsed_points = []
             
         # Initialize the figure with the initial number of zeros and poles
         self.init_figure(z_x, z_y, p_x, p_y)
         # Call the super class with the zero pole axis to enable the draggable markers
-        super().__init__(
-            ax=self.axs[0], lines=self.axs[0].lines[1:], update_func=self.change_freq_res, update_conj=self.update_conjugate)
+        super().__init__(ax=self.axs[0], lines=self.axs[0].lines[1:], update_func=self.change_freq_res, update_conj=self.update_conjugate)
 
         # Non causal text field
         self.tx_deb = self.axs[0].text(-1.75, 1.5, '', fontdict={'color': 'red', 'size': 12})
@@ -156,25 +152,21 @@ class DraggableZeroPolePlot(DraggableMarker):
         self.change_freq_res(init=True)
 
         # Widgets
-        # Zeros
-        self.zero_range = widgets.IntSlider(
-            value=zeros if not self.real_filter else 2*zeros, min=0, max=zeros+10, step=2 if self.real_filter else 1, description='Zeros:')
+        # Zeros                                    
+        self.zero_range = widgets.IntSlider(value=zeros, min=0, max=zeros+10, step=1, description='Zeros:', continuous_update=False)
 
         self.zero_range.observe(self.on_zero_change, names='value')
-        # Poles
-        self.pole_range = widgets.IntSlider(
-            value=poles if not self.real_filter else 2*poles, min=0, max=poles+10, step=2 if self.real_filter else 1, description='Poles:')
+        # Poles                                  
+        self.pole_range = widgets.IntSlider(value=poles, min=0, max=poles+10, step=1, description='Poles:', continuous_update=False)
 
         self.pole_range.observe(self.on_pole_change, names='value')
 
         # Check box to show phase plot
-        self.phase_check = widgets.Checkbox(
-            value=self.show_phase, description='Show phase')
+        self.phase_check = widgets.Checkbox(value=self.show_phase, description='Show phase')
         self.phase_check.observe(self.show_phase_callback, names='value')
         
         # Check box to show gain in dB
-        self.dB_check = widgets.Checkbox(
-            value=self.show_dB, description='dB')
+        self.dB_check = widgets.Checkbox(value=self.show_dB, description='dB')
         self.dB_check.observe(self.show_dB_callback, names='value')
 
         # Button to switch between continuous and discrete mode
@@ -183,25 +175,21 @@ class DraggableZeroPolePlot(DraggableMarker):
         #self.mode_button.on_click(self.mode_button_callback)
         
         # Button to change to real filter
-        self.real_button=widgets.Checkbox(value= self.real_filter, description = "Real filter", 
-                                          layout=Layout(width='50%'))
-        self.real_button.observe(self.real_filter_callback, names = 'value')
+        self.real_button=widgets.Checkbox(value=self.real_filter, description = "Real filter", layout=Layout(width='50%'))
+        self.real_button.observe(self.real_filter_callback, names='value')
 
         # Float text widgets
-        self.input_Zero_RE = widgets.FloatText(
-            value=self.lastzeroRe, description='Re:')
+        self.input_Zero_RE = widgets.FloatText(value=self.lastzeroRe, description='Re:')
         self.input_Zero_RE.observe(self.Zero_RE_Caller, names='value')
 
-        self.input_Zero_IM = widgets.FloatText(
-            value=self.lastzeroIm, description='Im:')
+        self.input_Zero_IM = widgets.FloatText(value=self.lastzeroIm, description='Im:')
         self.input_Zero_IM.observe(self.Zero_IM_Caller, names='value')
 
         self.collapsing = False
         
         # Display widgets and plot
-        display(VBox([self.out,
-                      HBox([self.zero_range, self.pole_range,
-                             self.phase_check]),
+        display(VBox([self.out, 
+                      HBox([self.zero_range, self.pole_range, self.phase_check]),
                       HBox([self.input_Zero_RE, self.input_Zero_IM, self.dB_check, self.real_button])]))
         plt.tight_layout(pad=0.4, w_pad=1.5, h_pad=1.0)
         
@@ -246,14 +234,10 @@ class DraggableZeroPolePlot(DraggableMarker):
         self.change_conjugate()
         self.change_freq_res()
         if self.real_filter: 
-            self.pole_range.step = 2
             self.pole_range.value = self.pole_range.value*2
-            self.zero_range.step = 2
             self.zero_range.value = self.zero_range.value*2
         elif not self.real_filter:
-            self.pole_range.step = 1
             self.pole_range.value = self.pole_range.value//2
-            self.zero_range.step = 1
             self.zero_range.value = self.zero_range.value//2
 
     def show_phase_callback(self, value):
@@ -288,6 +272,7 @@ class DraggableZeroPolePlot(DraggableMarker):
         self.change_freq_res()
 
     def on_zero_change(self, change):
+        self.active_line = 0
         if change['new'] < 0:
             change['new'] = 0
             self.zero_range.min = 0
@@ -298,10 +283,19 @@ class DraggableZeroPolePlot(DraggableMarker):
             while len(self.axs[0].lines[1].get_data()[0]) > num_zeros:
                 if self.real_filter:
                     x, y = self.axs[0].lines[1].get_data()
+                    n_tot = len(self.collapsed_points[self.active_line])
+                    # Add all the conjugates
+                    x = np.concatenate((x[:n_tot//2], np.flip(x[:n_tot//2])))
+                    y = np.concatenate((y[:n_tot//2], np.flip(-y[:n_tot//2])))
+                    # Remove the last pole and its conjugate
                     x = x[1:-1]
                     y = y[1:-1]
-                    self.axs[0].lines[1].set_data(x, y)
+                    # Remove the two last positions of the collapsed points mask
                     self.collapsed_points[0] = self.collapsed_points[0][1:-1]
+                    # Only draw the non-collapsed points
+                    x = x[self.collapsed_points[self.active_line]==0]
+                    y = y[self.collapsed_points[self.active_line]==0]
+                    self.axs[0].lines[1].set_data(x, y)
                 else:
                     x, y = self.axs[0].lines[1].get_data()
                     x = x[:-1]
@@ -310,15 +304,16 @@ class DraggableZeroPolePlot(DraggableMarker):
         else:
             while len(self.axs[0].lines[1].get_data()[0]) < num_zeros:
                 x, y = self.axs[0].lines[1].get_data()
-                x = np.append(x, 0.5)
-                y = np.append(y, 0.5)
+                x = np.append(0.5, x)
+                y = np.append(0, y)
                 if self.real_filter:
-                    x = np.append(0.5, x)
-                    y = np.append(-0.5, y)
                     self.collapsed_points[0] = np.append(0, self.collapsed_points[0])
-                    self.collapsed_points[0] = np.append(self.collapsed_points[0], 0)
+                    self.collapsed_points[0] = np.append(self.collapsed_points[0], 1)
 
                 self.axs[0].lines[1].set_data(x, y)
+        
+        # Set the correct number of poles in the slider
+        self.zero_range.value = len(self.axs[0].lines[1].get_data()[0])
         
         # Make sure to remove all collapsed points
         if self.real_filter and num_zeros == 0:
@@ -328,20 +323,31 @@ class DraggableZeroPolePlot(DraggableMarker):
         self.change_freq_res()
 
     def on_pole_change(self, change):
+        self.active_line = 1
         if change['new'] < 0:
             change['new'] = 0
             self.pole_range.min = 0
             self.pole_range.value = 0
         num_poles = change['new'] #if not self.real_filter else 2*change['new']
+        
         # Don't update if we are collapsing a point
         if change['new'] < change['old']:
             while len(self.axs[0].lines[2].get_data()[0]) > num_poles:
                 if self.real_filter:
                     x, y = self.axs[0].lines[2].get_data()
+                    n_tot = len(self.collapsed_points[self.active_line])
+                    # Add all the conjugates
+                    x = np.concatenate((x[:n_tot//2], np.flip(x[:n_tot//2])))
+                    y = np.concatenate((y[:n_tot//2], np.flip(-y[:n_tot//2])))
+                    # Remove the last pole and its conjugate
                     x = x[1:-1]
                     y = y[1:-1]
-                    self.axs[0].lines[2].set_data(x, y)
+                    # Remove the two last positions of the collapsed points mask
                     self.collapsed_points[1] = self.collapsed_points[1][1:-1]
+                    # Only draw the non-collapsed points
+                    x = x[self.collapsed_points[self.active_line]==0]
+                    y = y[self.collapsed_points[self.active_line]==0]
+                    self.axs[0].lines[2].set_data(x, y)
                 else:
                     x, y = self.axs[0].lines[2].get_data()
                     x = x[:-1]
@@ -350,22 +356,20 @@ class DraggableZeroPolePlot(DraggableMarker):
         else:
             while len(self.axs[0].lines[2].get_data()[0]) < num_poles:
                 x, y = self.axs[0].lines[2].get_data()
-                nl = len(x)
-                nlhalf = int(nl/2)
-                x = np.append(x, 0.5)
-                y = np.append(y, -0.5)
+                x = np.append(-0.5, x)
+                y = np.append(0, y)
                 if self.real_filter:
-                    x = np.append(0.5, x)
-                    y = np.append(0.5, y)
                     self.collapsed_points[1] = np.append(0, self.collapsed_points[1])
-                    self.collapsed_points[1] = np.append(self.collapsed_points[1], 0)
+                    self.collapsed_points[1] = np.append(self.collapsed_points[1], 1)
 
                 self.axs[0].lines[2].set_data(x, y)
+        # Set the correct number of poles in the slider
+        self.pole_range.value = len(self.axs[0].lines[2].get_data()[0])
                 
         # Make sure to remove all collapsed points
         if self.real_filter and num_poles == 0:
             self.collapsed_points[1] = []
-            
+        
         # Update frequency response plot
         self.change_freq_res()
     
@@ -389,7 +393,7 @@ class DraggableZeroPolePlot(DraggableMarker):
                 x_aux = x_aux[int(nl/2):nl]
                 y_aux = y_aux[int(nl/2):nl]
                 self.axs[0].lines[i+1].set_data(x_aux,y_aux)
-                self.collapsed_points = []
+            self.collapsed_points = []
      
     
     #Function that updates the conjugate of the point that is dragged
@@ -421,7 +425,12 @@ class DraggableZeroPolePlot(DraggableMarker):
             self.active_point = new_active_point
         
         # Set the mask value
-        if np.abs(y_aux[self.active_point]) < 0.05:
+        if np.abs(y_aux[self.active_point]) < 0.1:
+            # Bind the point to the x axis if close to 0
+            y_aux[self.active_point] = 0
+            # Update the text field correctly
+            self.tx.set_position((x_aux[self.active_point], y_aux[self.active_point]))
+            self.tx.set_text(f"Re: {x_aux[self.active_point]:.3f}\nIm: {y_aux[self.active_point]:.3f}")
             if self.collapsed_points[self.active_line][adjusted_active_point] != 1:
                 # Collapse points
                 self.collapsed_points[self.active_line][adjusted_active_point] = 1
