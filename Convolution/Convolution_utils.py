@@ -5,7 +5,7 @@ from ipywidgets import interact, fixed, IntSlider, HBox, Layout, Output, VBox
 import ipywidgets as widgets
 
 class Convolution_demo():
-    def __init__(self, n=10, a_h=1.3, a_g=1.1, delay=1000):
+    def __init__(self, n=10, a_h=1.3, a_g=1.1, delay=2000):
         self.out = Output(layout={'width': '1000px', 'height': '600px'})
         self.out_static = Output(layout={'width': '1000px', 'height': '300px'})
         self.axs = []
@@ -16,8 +16,7 @@ class Convolution_demo():
         self.k = np.linspace(0, self.n-1, self.n)
         self.k_m = np.linspace(-self.n, self.n-1, 2*self.n)
         
-        self.formula_equal = r'$(h \ast g)[n] = a^ns_+^\wedge[n]=a^n(n+1)u[n]$'
-        self.formula_not_equal = r'$(h \ast g)[n] = \left(\frac{a_h}{a_h-a_g}a_h^n - \frac{a_g}{a_h-a_g}a_2^n\right)u[n]$'
+        self.formula = r'$(h \ast g)[n] = \sum_{m=-\infty}^{\infty}h[m]g[n-m]$'
         
         self.update_signals(-1)
         
@@ -27,19 +26,25 @@ class Convolution_demo():
         # Play widget for animation
         self.play = widgets.Play(value=-1, min=-1, max=self.n-1, step=1, interval=delay, description="Play")
         # Slider widget for manual change
-        self.slider = widgets.IntSlider(min=-1, max=self.n-1, description='n')
+        self.slider = widgets.IntSlider(min=-1, max=self.n-1, description='n', style={'description_width':'50px'})
         # Link the two widgets
         widgets.jslink((self.play, 'value'), (self.slider, 'value'))
         # Add callback function
         self.play.observe(self.update, names='value')
         # Float widgets for a_h and a_g
-        self.a_h_widget = widgets.BoundedFloatText(value=self.a_h, min=0, max=10.0, step=0.01, description=r'$a_h:$')
-        self.a_g_widget = widgets.BoundedFloatText(value=self.a_g, min=0, max=10.0, step=0.01, description=r'$a_g:$')
+        self.a_h_widget = widgets.BoundedFloatText(value=self.a_h, min=0, max=10.0, step=0.01, description=r'$a_h:$', style={'description_width':'initial'}, layout={'width':'100px'})
+        self.a_g_widget = widgets.BoundedFloatText(value=self.a_g, min=0, max=10.0, step=0.01, description=r'$a_g:$', style={'description_width':'initial'}, layout={'width':'100px'})
         self.a_h_widget.observe(self.a_h_callback, names='value')
         self.a_g_widget.observe(self.a_g_callback, names='value')
+        # +1 button
+        self.p1_button = widgets.Button(description='+1', layout={'width':'40px'})
+        self.p1_button.on_click(self.p1_callback)
         
         # Display
-        display(VBox([self.out_static, self.out, HBox([self.play, self.slider, self.a_h_widget, self.a_g_widget])]))
+        display(VBox([self.out_static, self.out, HBox([self.play, self.p1_button, self.slider, self.a_h_widget, self.a_g_widget])]))
+    
+    def p1_callback(self, value):
+        self.slider.value = self.slider.value + 1
     
     def a_h_callback(self, value):
         self.a_h = value['new']
@@ -54,7 +59,8 @@ class Convolution_demo():
             self.axs_static[0].lines[i+1].set_data([k, k], [0, self.h[i]])
         self.axs_static[0].set_ylim([-0.05*np.max(self.h), 1.05*np.max(self.h)])
         self.axs[0].set_ylim([-0.05*np.max(self.h), 1.05*np.max(self.h)])
-        self.axs[2].set_ylim([-0.05*np.max(np.flip(self.g)*self.h), 1.05*np.max(np.flip(self.g)*self.h)])
+        max_val_mult = self.get_max_val_mult()
+        self.axs[2].set_ylim([-0.05*max_val_mult, 1.05*max_val_mult])
         self.axs[3].set_ylim([-0.05*np.max(self.conv), 1.05*np.max(self.conv)])
         self.update({'new':self.slider.value}, update_mult=False)
         
@@ -67,9 +73,16 @@ class Convolution_demo():
             self.axs_static[1].lines[i+1].set_data([k, k], [0, self.g[i]])
         self.axs_static[1].set_ylim([-0.05*np.max(self.g), 1.05*np.max(self.g)])
         self.axs[1].set_ylim([-0.05*np.max(self.g), 1.05*np.max(self.g)])
-        self.axs[2].set_ylim([-0.05*np.max(np.flip(self.g)*self.h), 1.05*np.max(np.flip(self.g)*self.h)])
+        max_val_mult = self.get_max_val_mult()
+        self.axs[2].set_ylim([-0.05*max_val_mult, 1.05*max_val_mult])
         self.axs[3].set_ylim([-0.05*np.max(self.conv), 1.05*np.max(self.conv)])
         self.update({'new':self.slider.value}, update_mult=False)
+    
+    def get_max_val_mult(self):
+        max_val = 0
+        for k_curr in range(-1, self.n):
+            max_val = max(np.max(np.concatenate([np.zeros(self.n), self.h]) * np.concatenate([np.zeros(k_curr+1), np.flip(self.g), np.zeros(self.n-k_curr-1)])), max_val)
+        return max_val if max_val > 0 else 1
     
     def init_figure(self):
         # Plot static plots of h and g
@@ -111,7 +124,7 @@ class Convolution_demo():
             self.axs[ax_ind].plot(-self.k-1, self.g, 'o', color='green')
             for i, k in enumerate(-self.k-1):
                 self.axs[ax_ind].plot([k, k], [0, self.g[i]], color='green', linewidth=2)
-            self.axs[ax_ind].set_ylabel(r'$g[-1-k]$')
+            self.axs[ax_ind].set_ylabel(r'$g^{\prime}[k]$')
             self.axs[ax_ind].set_xlabel(r'$k$')
             # Plot zeros
             self.axs[ax_ind].plot(np.linspace(0, self.n-1, self.n), np.zeros(self.n), 'o', color='green')
@@ -122,14 +135,15 @@ class Convolution_demo():
             self.axs[ax_ind].plot(self.k_m, self.mult, 'o', color='blue')
             for i, k in enumerate(self.k_m):
                 self.axs[ax_ind].plot([k, k], [0, self.mult[i]], color='blue', linewidth=2)
-            self.axs[ax_ind].set_ylabel(r'$(h \times g)[k]$')
-            self.axs[ax_ind].set_ylim([-0.05*np.max(np.flip(self.g)*self.h), 1.05*np.max(np.flip(self.g)*self.h)])
+            self.axs[ax_ind].set_ylabel(r'$(h \times g^{\prime})[k]$')
+            max_val_mult = self.get_max_val_mult()
+            self.axs[ax_ind].set_ylim([-0.05*max_val_mult, 1.05*max_val_mult])
             self.axs[ax_ind].set_xlabel(r'$k$')
             
             # Plot conv
             ax_ind=3
             self.axs.append(self.fig.add_subplot(self.gs[ax_ind, 0]))
-            self.axs[ax_ind].set_ylabel(r'$(g \ast h)[-1]$')
+            self.axs[ax_ind].set_ylabel(r'$(h \ast g)[-1]$')
             self.axs[ax_ind].set_ylim([-0.05*np.max(self.conv), 1.05*np.max(self.conv)])
             self.axs[ax_ind].set_xlabel(r'$n$')
             for i, k in enumerate(self.k):
@@ -139,11 +153,8 @@ class Convolution_demo():
             self.axs[ax_ind].plot(np.linspace(-self.n, -1, self.n), np.zeros(self.n), 'o', color='gray')
             
             # Text field for printing the formula
-            self.txt1 = self.axs[ax_ind].text(-self.n, 3*self.axs[ax_ind].get_ylim()[1]/5, '')
-            if self.a_h == self.a_g:
-                self.txt1.set_text(self.formula_equal)
-            else:
-                self.txt1.set_text(self.formula_not_equal)
+            self.txt1 = self.axs[ax_ind].text(-self.n, 3*self.axs[ax_ind].get_ylim()[1]/6, '', size=15)
+            self.txt1.set_text(self.formula)
             
             for ax_ind in range(4):
                 self.axs[ax_ind].set_xlim([-self.n-0.5, self.n-0.5])
@@ -173,11 +184,6 @@ class Convolution_demo():
             self.axs[1].lines[i+1].set_data([k, k], [0, self.g[i]])
         # Update zeros of g
         self.axs[1].lines[-1].set_data(np.concatenate([np.linspace(-self.n, -self.n+k_curr, k_curr+1), np.linspace(k_curr+1, self.n-1, self.n-k_curr-1)]), np.zeros(self.n))
-        if k_curr == 0:
-            self.axs[1].set_ylabel(r'$g[-k]$')
-        else:
-            self.axs[1].set_ylabel(r'$g[' + str(k_curr) + '-k]$')
-        
         # Update mult
         if update_mult:
             self.mult = np.concatenate([np.zeros(self.n), self.h]) * np.concatenate([np.zeros(k_curr+1), np.flip(self.g), np.zeros(self.n-k_curr-1)])
@@ -186,17 +192,13 @@ class Convolution_demo():
             self.axs[2].lines[i+1].set_data([k, k], [0, self.mult[i]])
         
         # Update conv
-        self.axs[3].set_ylabel(r'$(g \ast h)[' + str(k_curr) + ']$')
+        self.axs[3].set_ylabel(r'$(h \ast g)[' + str(k_curr) + ']$')
         # Initialize all lines to invisible and gray
         for l in self.axs[3].lines:
             l.set_color('gray')
         if k_curr >=0:
             # Set the current line to black
-            self.axs[3].lines[2*k_curr].set_color('black')
-            self.axs[3].lines[2*k_curr+1].set_color('black')
+            self.axs[3].lines[2*k_curr].set_color('red')
+            self.axs[3].lines[2*k_curr+1].set_color('red')
         
-        self.txt1.set_position((-self.n, 3*self.axs[3].get_ylim()[1]/5))
-        if self.a_h == self.a_g:
-            self.txt1.set_text(self.formula_equal)
-        else:
-            self.txt1.set_text(self.formula_not_equal)
+        self.txt1.set_position((-self.n, 3*self.axs[3].get_ylim()[1]/6))
