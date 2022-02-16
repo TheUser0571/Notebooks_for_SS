@@ -73,6 +73,7 @@ class Signal_undersampling():
 #             self.axs[2].set_ylim(self.axs[1].get_ylim())
             
             plt.tight_layout(pad=0.1, w_pad=1.0, h_pad=0.1)
+            plt.show()
     
     def sinc_interp(self, x, s, u):
         """

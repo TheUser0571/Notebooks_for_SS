@@ -107,6 +107,7 @@ class Filter_Demo():
             self.axs[2].set_xlim([np.min(self.t), np.max(self.t)])
             self.axs[2].set_ylim([np.min(self.s), np.max(self.s)])
             self.axs[2].get_yaxis().set_visible(False)
+            plt.show()
 
     def update_filter(self, init=False):
         # Ensure that the lower frequency is first

@@ -47,7 +47,7 @@ class Conv_Zero_Padding():
 
         if display:
             plt.close('all')
-            view = viewer([self.img, img_convolved], subplots=(1,2))
+            view = viewer([self.img, img_convolved], title=['Original image', 'Convolved image'], subplots=(1,2))
 
         if save:
             self.img_convolved = img_convolved

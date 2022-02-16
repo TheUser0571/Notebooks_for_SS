@@ -102,6 +102,7 @@ class Recursive_filtering_demo():
             self.baseline_y.set_visible(False)
             self.highlight_marker_y[0].set_visible(False)
             self.highlight_line_y[0].set_visible(False)
+            plt.show()
             
             
     def update_x(self):

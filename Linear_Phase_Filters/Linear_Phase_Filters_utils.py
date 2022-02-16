@@ -193,7 +193,7 @@ class DraggableMarker():
 
 class LinearPhaseFilterExercise(DraggableMarker):
     def __init__(self):
-        self.out = Output(layout={'width': '980px', 'height': '450px'})
+        self.out = Output(layout={'width': '2000px', 'height': '450px'})
         self.axs = []
         #I change this because it is going to be the discrete zero pole plot demo
         self.discrete_mode = True#not continuous
@@ -517,12 +517,18 @@ class LinearPhaseFilterExercise(DraggableMarker):
                     labels = ['-$\pi$', '-$\dfrac{\pi}{2}$', '0', '$\dfrac{\pi}{2}$', '$\pi$']
                     self.axs[1].set_xticks(positions)
                     self.axs[1].set_xticklabels(labels)
+                    # Move y axis to the right
+                    self.axs[1].yaxis.set_label_position("right")
+                    self.axs[1].yaxis.tick_right()
                     if self.show_phase:
                         self.axs[1].xaxis.set_visible(False)
                         positions = [-np.pi, -np.pi/2, 0, np.pi/2, np.pi]
                         labels = ['-$\pi$', '-$\dfrac{\pi}{2}$', '0', '$\dfrac{\pi}{2}$', '$\pi$']
                         self.axs[2].set_xticks(positions)
                         self.axs[2].set_xticklabels(labels)
+                        # Move y axis to the right
+                        self.axs[2].yaxis.set_label_position("right")
+                        self.axs[2].yaxis.tick_right()
                 else:
                     w_max = np.round(np.max(w)/np.pi)*np.pi
                     w_min = np.round(np.min(w)/np.pi)*np.pi

@@ -70,12 +70,9 @@ class Interpolation():
         #self.functy = np.full(shape=100, fill_value=1, dtype=np.int)
         
         self.init_figure()
-        #plt.show()
         
         display(VBox([self.out, HBox([self.funct_menu, self.sampling_period, self.print_err])]))
         plt.tight_layout(pad=0.1, w_pad=1.0, h_pad=0.1)
-        
-        #self.print_err
     
     
     def init_figure(self):
@@ -108,6 +105,7 @@ class Interpolation():
             self.axs[1].plot(self.x_interp, self.interpolation(), '-')
             self.axs[1].plot(self.x_val, self.y_val, 'or')
             self.axs[1].legend(['data', 'interpolated data ', 'sampled data'], loc='upper left')
+            plt.show()
         
     def interpolation(self):
         if(self.funct_idx==0):

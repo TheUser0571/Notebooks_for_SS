@@ -101,6 +101,7 @@ class Convolution_demo():
             self.axs_static[1].set_title('g[k]')
             self.axs_static[1].set_xlabel('k')
             plt.tight_layout(pad=0.1, w_pad=1.0, h_pad=0.1)
+            plt.show()
         
         with self.out:
             self.fig = plt.figure('Convolution Demo', figsize=(8.5, 5.5))
@@ -160,6 +161,7 @@ class Convolution_demo():
                 self.axs[ax_ind].set_xlim([-self.n-0.5, self.n-0.5])
                 self.axs[ax_ind].set_xticks(np.linspace(-self.n, self.n-1, 2*self.n))
             plt.tight_layout(pad=0.1, w_pad=1.5, h_pad=0.1)
+            plt.show()
             
     def update_signals(self, k_curr):
         self.h = self.a_h**self.k

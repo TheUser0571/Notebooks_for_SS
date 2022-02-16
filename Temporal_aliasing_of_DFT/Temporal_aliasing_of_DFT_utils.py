@@ -69,6 +69,7 @@ class DFT_temporal_aliasing():
             #Plot the DFT
             self.axs.append(self.fig.add_subplot(self.gs[2,0]))
             self.plot_DFT()
+            plt.show()
          
         
     def plot_N_period(self):
